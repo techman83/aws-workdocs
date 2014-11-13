@@ -1,6 +1,5 @@
 # thanks -> http://blogs.perl.org/users/alex_balhatchet/2013/04/travis-ci-perl.html
 language: perl
-env: TRAVIS_BUILD=1
 perl:
   - "5.20"
   - "5.18"
@@ -18,5 +17,4 @@ install:
    - dzil authordeps | grep -vP '[^\w:]' | xargs -n 5 -P 10 cpanm --quiet --notest --skip-satisfied
    - dzil listdeps | grep -vP '[^\w:]' |  xargs -n 5 -P 10 cpanm --quiet --notest
 script:
-   - ./t/bin/cached_api.pl &
    - dzil test --author 

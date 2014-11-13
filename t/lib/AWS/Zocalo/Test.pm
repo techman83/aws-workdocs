@@ -43,19 +43,14 @@ method test_with_dancer($test, $number_tests) {
 
     skip 'These tests are for cached testing and require Dancer2 + JSON.', $number_tests if ($@);
 
-    my $pid;
-    # If we're inside a Travis build, we'll launch before running.
-    if (!$ENV{TRAVIS_BUILD}) {
-      # Launch Dancer Instance - http://www.perlmonks.org/?node_id=964597
-      $pid = fork();
+    my $pid = fork();
 
-      if (!$pid) {
-        exec("t/bin/cached_api.pl");
-      }
-
-      # Allow some time for the instance to spawn. TODO: Make this smarter
-      sleep 5;
+    if (!$pid) {
+      exec("t/bin/cached_api.pl");
     }
+
+    # Allow some time for the instance to spawn. TODO: Make this smarter
+    sleep 5;
 
     my $config = {
       username => 'zocalo.test@example.com',
@@ -74,10 +69,8 @@ method test_with_dancer($test, $number_tests) {
 
     $test->($auth, $config, "Testing Cached API");
   
-    if (!$ENV{TRAVIS_BUILD}) {
-      # Kill Dancer
-      kill 9, $pid;
-    }
+    # Kill Dancer
+    kill 9, $pid;
   }
 }
 
