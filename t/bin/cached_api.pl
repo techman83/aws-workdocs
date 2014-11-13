@@ -1,4 +1,4 @@
-#!/usr/env/perl
+#!/usr/bin/env perl
 use lib './t/lib/';
 
 use strict;
