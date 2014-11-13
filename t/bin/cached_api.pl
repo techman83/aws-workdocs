@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-use lib 't/lib/';
+use lib './t/lib/';
 
 use strict;
 use Dancer2;
