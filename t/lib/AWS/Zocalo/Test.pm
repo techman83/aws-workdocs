@@ -38,21 +38,40 @@ method test_with_dancer($test, $number_tests) {
   SKIP: {
     eval {  
       require Dancer2; 
-      require Proc::Daemon;
       require JSON;
     };
 
-    skip 'These tests are for cached testing and require Proc::Daemon, Dancer2 + JSON.', $number_tests if ($@);
+    skip 'These tests are for cached testing and require Dancer2 + JSON.', $number_tests if ($@);
+
+    # Launch Dancer Instance - http://www.perlmonks.org/?node_id=964597
+    my $pid = fork();
+
+    if (!$pid) {
+      exec("t/bin/cached_api.pl");
+    }
+
+    # Allow some time for the instance to spawn. TODO: Make this smarter
+    sleep 5;
+
+    my $config = {
+      username => 'zocalo.test@example.com',
+      password => 'mustbe8Chars^',
+      givenname => 'Zocalo',
+      surname => 'Test',
+    };
 
     my $auth = AWS::Zocalo::Auth->new(
-      api_base => "http://localhost:3000/v1",
-      region => $self->config->{auth}{region}, 
-      alias => $self->config->{auth}{alias}, 
-      username => $self->config->{auth}{username}, 
-      password => $self->config->{auth}{password}, 
+      api_base => "http://localhost:3001",
+      region => 'us-west-2', 
+      alias => 'example', 
+      username => 'zocalo.admin@example.com', 
+      password => 'aReallyGoodone..', 
     );
 
-    #$test->($auth,$self->config->{test}, "Testing Cached API");
+    $test->($auth, $config, "Testing Cached API");
+  
+    # Kill Dancer
+    kill 9, $pid;
   }
 }
 

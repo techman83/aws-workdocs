@@ -1,0 +1,71 @@
+{
+  "appname": "Zocalo Test Cache",
+  "charset": "UTF-8",
+  "session": "Simple",
+  "serializer": "JSON",
+  "content_type": "application/json",
+  "testdata" : {
+    "user": {
+      "Id": "S-1-1-43215132",
+      "Username": "zocalo.test@example.com",
+      "Password": "mustbe8Chars^",
+      "GivenName": "Zocalo",
+      "Surname": "Test"
+    },
+    "org": {
+      "Id": "d-123456789",
+      "Name": "testing",
+    },
+    "User": {
+      "Administrator": false, 
+      "Created": "2014-11-11T08:13:45.933Z", 
+      "EmailAddress": "zocalo.test@example.com", 
+      "GivenName": "Zocalo", 
+      "GroupTypes": [
+          "ZOCALO_USER"
+      ], 
+      "Id": "S-1-1-43215132",
+      "Modified": "2014-11-11T08:13:45.933Z", 
+      "Organization": {
+          "Created": null, 
+          "Id": "d-123456789", 
+          "Mode": null, 
+          "Modified": null, 
+          "Name": "testing", 
+          "SharingRule": null, 
+          "StorageMetadata": null, 
+          "Subdomain": "testing", 
+          "UserInviteRule": null
+      }, 
+      "OrganizationId": "d-123456789", 
+      "OwnershipTransferInfo": null, 
+      "ProfilePhotoMetadata": {
+          "ProfilePhotoPreviewStatus": "UNAVAILABLE", 
+          "ProfilePhotoThumbnails": {
+              "LARGE": "https://gb-us-west-2-prod-profile-photos.s3.amazonaws.com/.default/LARGE?", 
+              "SMALL": "https://gb-us-west-2-prod-profile-photos.s3.amazonaws.com/.default/SMALL?", 
+              "SMALL_HQ": "https://gb-us-west-2-prod-profile-photos.s3.amazonaws.com/.default/SMALL_HQ?"
+          }, 
+          "ProfilePhotoUploadUrl": null
+      }, 
+      "RecycleBinFolderId": "123456790", 
+      "RootFolderId": "1234567890", 
+      "Status": "ACTIVE", 
+      "Storage": {
+          "StorageRule": {
+              "StorageAllocatedInBytes": 214748364800, 
+              "StorageType": "QUOTA"
+          }, 
+          "StorageUtilizedInBytes": 0
+      }, 
+      "Surname": "Test", 
+      "TimeZoneId": null, 
+      "Username": "zocalo.test@example.com", 
+      "WebPreferences": {
+          "HideDocumentFeedbackTutorial": "FALSE", 
+          "HideFeedbackTutorial": false, 
+          "HideNewUserTour": "FALSE"
+      }
+    }
+  }
+}
