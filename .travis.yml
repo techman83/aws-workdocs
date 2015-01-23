@@ -16,5 +16,9 @@ install:
    - cpanm --quiet --notest --skip-satisfied Dancer2 JSON Test::Perl::Critic
    - dzil authordeps | grep -vP '[^\w:]' | xargs -n 5 -P 10 cpanm --quiet --notest --skip-satisfied
    - dzil listdeps | grep -vP '[^\w:]' |  xargs -n 5 -P 10 cpanm --quiet --notest
+   - cpanm -quiet -notest Devel::Cover::Report::Coveralls
+   - cpanm -quiet -notest Dist::Zilla::App::Command::cover
 script:
-   - dzil test --author 
+   - dzil test --author
+after_success:
+  - dzil cover -outputdir cover_db -report coveralls
