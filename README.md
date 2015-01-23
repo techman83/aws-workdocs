@@ -1,4 +1,4 @@
-AWS::Zocalo [![Build Status](https://travis-ci.org/techman83/aws-zocalo.svg?branch=master)](https://travis-ci.org/techman83/aws-zocalo)
+AWS::Zocalo [![Build Status](https://travis-ci.org/techman83/aws-zocalo.svg?branch=master)](https://travis-ci.org/techman83/aws-zocalo)   [![Coverage Status](https://coveralls.io/repos/techman83/aws-zocalo/badge.svg?branch=master)](https://coveralls.io/r/techman83/aws-zocalo?branch=master)
 ===========
 
 NOTE: The API has not been formally released. Though likely to be
