@@ -2,12 +2,12 @@
 
 use lib 't/lib/';
 
-use AWS::Zocalo::Test;
+use AWS::WorkDocs::Test;
 use Test::Most;
 use List::MoreUtils qw( firstidx none );
 use Test::Warnings;
 
-my $tester = AWS::Zocalo::Test->new();
+my $tester = AWS::WorkDocs::Test->new();
 
 $tester->test_with_auth(\&folder_testing, 4);
 $tester->test_with_dancer(\&folder_testing, 4);
@@ -19,21 +19,21 @@ sub folder_testing {
     skip "No folder Id for testing", 4 unless $config->{folder}; 
   
     pass("Folder Testing: $message");  
-    use_ok("AWS::Zocalo::Content::Folder");
+    use_ok("AWS::WorkDocs::Content::Folder");
     
-    my $folder = AWS::Zocalo::Content::Folder->new(
+    my $folder = AWS::WorkDocs::Content::Folder->new(
       Id => $config->{folder},
       auth => $auth,
     );
     
     subtest 'Instantiation' => sub {
-      isa_ok($folder, "AWS::Zocalo::Content::Folder");
+      isa_ok($folder, "AWS::WorkDocs::Content::Folder");
       
       can_ok($folder, qw(retrieve org_share org_unshare user_share
         user_unshare shared_users shared_usernames));
     };
 
-    my $user = AWS::Zocalo::User->new(
+    my $user = AWS::WorkDocs::User->new(
       EmailAddress => $config->{username},
       GivenName => $config->{givenname},
       Surname => $config->{surname},

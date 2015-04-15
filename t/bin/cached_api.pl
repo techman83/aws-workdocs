@@ -3,9 +3,9 @@ use lib './t/lib/';
 
 use strict;
 use Dancer2;
-use AWS::Zocalo::Test::Auth;
-use AWS::Zocalo::Test::User;
-use AWS::Zocalo::Test::Content;
+use AWS::WorkDocs::Test::Auth;
+use AWS::WorkDocs::Test::User;
+use AWS::WorkDocs::Test::Content;
 
 my $DEBUG = $ENV{ZOCALO_DEBUG} || 0;
 

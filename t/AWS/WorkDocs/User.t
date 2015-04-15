@@ -2,11 +2,11 @@
 
 use lib 't/lib/';
 
-use AWS::Zocalo::Test;
+use AWS::WorkDocs::Test;
 use Test::Most;
 use Test::Warnings;
 
-my $tester = AWS::Zocalo::Test->new();
+my $tester = AWS::WorkDocs::Test->new();
 
 $tester->test_with_auth(\&user_testing, 6);
 $tester->test_with_dancer(\&user_testing, 6);
@@ -15,10 +15,10 @@ sub user_testing {
   my ($auth,$config,$message) = @_;
 
   pass("User Testing: $message");  
-  use_ok("AWS::Zocalo::User");
+  use_ok("AWS::WorkDocs::User");
   
 
-  my $user = AWS::Zocalo::User->new(
+  my $user = AWS::WorkDocs::User->new(
     EmailAddress => $config->{username},
     GivenName => $config->{givenname},
     Surname => $config->{surname},
@@ -27,7 +27,7 @@ sub user_testing {
   );
   
   subtest 'Instantiation' => sub {
-    isa_ok($user, "AWS::Zocalo::User");
+    isa_ok($user, "AWS::WorkDocs::User");
     
     can_ok($user, qw(retrieve create update update_attr activate
       deactivate delete));
@@ -48,10 +48,10 @@ sub user_testing {
   
   subtest 'Update' => sub {
     # Full User Update
-    $user->{GivenName} = 'ZocaloTest99';
+    $user->{GivenName} = 'WorkDocsTest99';
     $user->{Surname} = 'Surname99';
     $user->update();
-    is($user->{GivenName}, 'ZocaloTest99', "GivenName: $user->{GivenName}");
+    is($user->{GivenName}, 'WorkDocsTest99', "GivenName: $user->{GivenName}");
     is($user->{Surname}, 'Surname99', "Surname: $user->{Surname}");
   
     # Attribute Updated

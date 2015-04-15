@@ -1,4 +1,4 @@
-package AWS::Zocalo::Test::Content;
+package AWS::WorkDocs::Test::Content;
 
 use Dancer2;
 

@@ -1,4 +1,4 @@
-package AWS::Zocalo::Test::User;
+package AWS::WorkDocs::Test::User;
 
 use Dancer2;
 
