@@ -57,6 +57,7 @@ method test_with_dancer($test, $number_tests) {
       password => 'mustbe8Chars^',
       givenname => 'Zocalo',
       surname => 'Test',
+      folder => '12345678',
     };
 
     my $auth = AWS::Zocalo::Auth->new(
