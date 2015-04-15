@@ -1,5 +1,5 @@
 {
-  "appname": "Zocalo Test Cache",
+  "appname": "WorkDocs Test Cache",
   "charset": "UTF-8",
   "session": "Simple",
   "serializer": "JSON",
@@ -7,9 +7,9 @@
   "testdata" : {
     "user": {
       "Id": "S-1-1-43215132",
-      "Username": "zocalo.test@example.com",
+      "Username": "workdocs.test@example.com",
       "Password": "mustbe8Chars^",
-      "GivenName": "Zocalo",
+      "GivenName": "WorkDocs",
       "Surname": "Test"
     },
     "org": {
@@ -19,8 +19,8 @@
     "User": {
       "Administrator": false, 
       "Created": "2014-11-11T08:13:45.933Z", 
-      "EmailAddress": "zocalo.test@example.com", 
-      "GivenName": "Zocalo", 
+      "EmailAddress": "workdocs.test@example.com", 
+      "GivenName": "WorkDocs", 
       "GroupTypes": [
           "ZOCALO_USER"
       ], 
@@ -60,7 +60,7 @@
       }, 
       "Surname": "Test", 
       "TimeZoneId": null, 
-      "Username": "zocalo.test@example.com", 
+      "Username": "workdocs.test@example.com", 
       "WebPreferences": {
           "HideDocumentFeedbackTutorial": "FALSE", 
           "HideFeedbackTutorial": false, 

@@ -1,4 +1,4 @@
-Testing AWS::Zocalo
+Testing AWS::WorkDocs
 ===================
 
 Testing will automatically occur if the right files + dependencies 
@@ -10,14 +10,14 @@ of the repository.
 Live Testing
 ============
 
-A file named `~/.zocalotest` will need to be present with the
+A file named `~/.workdocstest` will need to be present with the
 following contents:
 
 ```ini
 [auth]
-username=zocalo.user@example.com
+username=workdocs.user@example.com
 password=a_good_password
-alias=zocalo_organisation
+alias=workdocs_organisation
 region=us-west-1
 [test]
 username=test.user@example.com
@@ -27,7 +27,7 @@ surname=User
 ```
 
 You'll need to set the relevant username/password/alias/region
-for your Zocalo Account.
+for your WorkDocs Account.
 
 Offline Testing
 ===============

@@ -1,4 +1,4 @@
-package AWS::Zocalo::Test::User;
+package AWS::WorkDocs::Test::User;
 
 use Dancer2;
 
@@ -34,7 +34,8 @@ del '/user/:Id' => sub {
 };
 
 get '/organization/user/search' => sub {
-  { blah => "blah" }
+  my $user->{Users} = [ config->{testdata}{User} ];
+  return $user;
 };
 
 1;

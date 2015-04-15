@@ -7,6 +7,6 @@ use Test::Warnings;
 
 use_ok('experimental', 'say');
 
-use_ok('AWS::Zocalo');
+use_ok('AWS::WorkDocs');
 
 done_testing();

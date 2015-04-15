@@ -1,8 +1,8 @@
-package AWS::Zocalo::Test;
+package AWS::WorkDocs::Test;
 
 use strict;
 use warnings;
-use AWS::Zocalo::Auth;
+use AWS::WorkDocs::Auth;
 use Config::Tiny;
 use Moo;
 use Method::Signatures;
@@ -15,22 +15,22 @@ has 'config' => (
 );
 
 method _build_config() {
-  my $config = Config::Tiny->read( "$ENV{HOME}/.zocalotest" );
+  my $config = Config::Tiny->read( "$ENV{HOME}/.workdocstest" );
   return $config;
 }
 
 method test_with_auth($test, $number_tests) {
   SKIP: {
-    skip "No auth credentials found.", $number_tests unless ( -e "$ENV{HOME}/.zocalotest" );
+    skip "No auth credentials found.", $number_tests unless ( -e "$ENV{HOME}/.workdocstest" );
 
-    my $auth = AWS::Zocalo::Auth->new(
+    my $auth = AWS::WorkDocs::Auth->new(
       region => $self->config->{auth}{region}, 
       alias => $self->config->{auth}{alias}, 
       username => $self->config->{auth}{username}, 
       password => $self->config->{auth}{password}, 
     );
 
-    $test->($auth,$self->config->{test}, "Testing Live Zocalo API");
+    $test->($auth,$self->config->{test}, "Testing Live WorkDocs API");
   }
 }
 
@@ -53,17 +53,18 @@ method test_with_dancer($test, $number_tests) {
     sleep 5;
 
     my $config = {
-      username => 'zocalo.test@example.com',
+      username => 'workdocs.test@example.com',
       password => 'mustbe8Chars^',
-      givenname => 'Zocalo',
+      givenname => 'WorkDocs',
       surname => 'Test',
+      folder => '12345678',
     };
 
-    my $auth = AWS::Zocalo::Auth->new(
+    my $auth = AWS::WorkDocs::Auth->new(
       api_base => "http://localhost:3001",
       region => 'us-west-2', 
       alias => 'example', 
-      username => 'zocalo.admin@example.com', 
+      username => 'workdocs.admin@example.com', 
       password => 'aReallyGoodone..', 
     );
 

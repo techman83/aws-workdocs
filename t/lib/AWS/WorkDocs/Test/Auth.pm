@@ -1,4 +1,4 @@
-package AWS::Zocalo::Test::Auth;
+package AWS::WorkDocs::Test::Auth;
 
 use Dancer2;
 set serializer => 'JSON';
