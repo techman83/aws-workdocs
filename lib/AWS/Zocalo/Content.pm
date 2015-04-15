@@ -125,15 +125,51 @@ Takes named parameters of 'users' and 'access'
 
 =item users
 
-'users' will take a single username (Zocalo users are email 
+'users' will take a single username (Zocalo usernames are email 
 addresses) or an array of usernames.
 
 =item access
 
-'access' will default to 'VIEW' unless otherwise specified. The
-other acceptable value is 'CONTRIBUTE'.
+'access' will default to 'VIEWER' unless otherwise specified. The
+other acceptable values are 'CONTRIBUTOR', 'COOWNER' or 'OWNER'.
 
 =back
+
+=cut
+
+method user_share(:$users,:$access = "VIEWER", :$message = "") {
+  $access = uc($access);
+  if ($access !~ /COOWNER|VIEWER|OWNER|CONTRIBUTOR/) {
+    croak("$access not valid, only [COOWNER, VIEWER, OWNER, CONTRIBUTOR] are valid types");
+  }
+
+  my $body;
+  if ( reftype( $users )->array ) {
+    foreach my $user ( @{$users} ) {
+      $user = AWS::Zocalo::User->new( EmailAddress => $user, auth => $self->auth);
+      $user->retrieve();
+      my $permission = {
+        Id => $user->Id,
+        Type => "USER",
+        Role => $access,
+      };
+      push(@{$body->{Principals}}, $permission);
+    }
+  } else {
+    $users = AWS::Zocalo::User->new( EmailAddress => $users, auth => $self->auth);
+    $users->retrieve();
+    my $permission = {
+      Id => $users->Id,
+      Type => "USER",
+      Role => $access,
+    };
+    push(@{$body->{Principals}}, $permission);
+  }
+  
+  $body->{Options}{Email}{Message} = $message;
+  $self->auth->api_put("/resource/".$self->Id."/permissions", $body);
+  $self->retrieve;
+}
 
 =method user_unshare
 
@@ -146,12 +182,16 @@ usernames.
 
 method user_unshare(:$users) {
   my $result;
-  if ( reftype( \@{$users} )->array ) {
+  if ( reftype( $users )->array ) {
     foreach my $user ( @{$users} ) {
-      $self->auth->api_delete("/$self->{_type}/$self->{Id}/share/$user");
+      $user = AWS::Zocalo::User->new( EmailAddress => $user, auth => $self->auth);
+      $user->retrieve();
+      $self->auth->api_delete("/resource/".$self->Id."/permissions/".$user->Id);
     }
   } else {
-    $self->auth->api_delete("/$self->{_type}/$self->{Id}/share/$users");
+    $users = AWS::Zocalo::User->new( EmailAddress => $users, auth => $self->auth);
+    $users->retrieve();
+    $self->auth->api_delete("/resource/".$self->Id."/permissions/".$users->Id);
   }
   $self->retrieve;
 }
