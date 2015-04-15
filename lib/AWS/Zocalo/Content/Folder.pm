@@ -3,9 +3,12 @@ package AWS::Zocalo::Content::Folder;
 use v5.010;
 use strict;
 use warnings;
-use Moo;
 use Method::Signatures;
 use Scalar::Util::Reftype;
+use Carp 'croak';
+use AWS::Zocalo::User;
+use Moo;
+use namespace::clean
 
 extends 'AWS::Zocalo::Content';
 
@@ -17,31 +20,12 @@ extends 'AWS::Zocalo::Content';
 
   use AWS::Zocalo::Content::Folder;
 
-  my $folder = AWS::Zocalo::Content::Folder->new( Id => 'fjkldsajfdsa' );
+  $folder = AWS::Zocalo::Content::Folder->new( Id => 'fjkldsajfdsa' );
 
 =head1 DESCRIPTION
 
 Extends L<AWS::Zocalo::Content>, see that for all documentation.
 
 =cut
-
-method user_share(:$users,:$access = "VIEW") {
-  $access = uc($access);
-  if (! $access =~ /VIEW|CONTRIBUTE/) {
-    croak("$access not valid, only VIEW|CONTRIBUTE are valid types");
-  }
-
-  my $body;
-  if ( reftype( \@{$users} )->array ) {
-    foreach my $user ( @{$users} ) {
-      $body->{UserPermissionMap}{$user} = "$access";
-    }
-  } else {
-    $body->{UserPermissionMap}{$users} = "$access";
-  }
-  
-  $self->auth->api_post("/$self->{_type}/$self->{Id}/share", $body);
-  $self->retrieve;
-}
 
 1;

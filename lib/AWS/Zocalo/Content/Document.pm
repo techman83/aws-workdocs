@@ -17,42 +17,12 @@ extends 'AWS::Zocalo::Content';
 
   use AWS::Zocalo::Content::Document;
 
-  my $folder = AWS::Zocalo::Content::Document->new( Id => 'fjkldsajfdsa' );
+  my $Document = AWS::Zocalo::Content::Document->new( Id => 'fjkldsajfdsa' );
 
 =head1 DESCRIPTION
 
 Extends L<AWS::Zocalo::Content>, see that for all documentation.
 
 =cut
-
-method user_share(:$users,:$access = "VIEW") {
-  $access = uc($access);
-  if (! $access =~ /VIEW|CONTRIBUTE/) {
-    croak("$access not valid, only VIEW|CONTRIBUTE are valid types");
-  }
-
-  my ($body, $entry);
-  if ( reftype( \@{$users} )->array ) {
-    foreach my $user ( @{$users} ) {
-      $entry = {
-        Permission => $access,
-        UserId => $user 
-      };
-
-      push(@{$body->{UserListWithPermissions}}, $entry);
-    }
-  } else {
-    $entry = {
-      Permission => $access,
-      UserId => $users
-    }; 
-    push(@{$body->{UserListWithPermissions}}, $entry);
-  }
-  
-  $body->{DocumentId} = $self->{Id};
-
-  $self->auth->api_post("/$self->{_type}/$self->{Id}/share", $body);
-  $self->retrieve;
-}
 
 1;
