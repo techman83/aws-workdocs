@@ -146,20 +146,20 @@ method user_share(:$users,:$access = "VIEWER", :$message = "") {
   my $body;
   if ( reftype( $users )->array ) {
     foreach my $user ( @{$users} ) {
-      $user = AWS::WorkDocs::User->new( EmailAddress => $user, auth => $self->auth);
-      $user->retrieve();
+      my $user_object = AWS::WorkDocs::User->new( EmailAddress => $user, auth => $self->auth);
+      $user_object->retrieve();
       my $permission = {
-        Id => $user->Id,
+        Id => $user_object->Id,
         Type => "USER",
         Role => $access,
       };
       push(@{$body->{Principals}}, $permission);
     }
   } else {
-    $users = AWS::WorkDocs::User->new( EmailAddress => $users, auth => $self->auth);
-    $users->retrieve();
+    my $user_object = AWS::WorkDocs::User->new( EmailAddress => $users, auth => $self->auth);
+    $user_object->retrieve();
     my $permission = {
-      Id => $users->Id,
+      Id => $user_object->Id,
       Type => "USER",
       Role => $access,
     };

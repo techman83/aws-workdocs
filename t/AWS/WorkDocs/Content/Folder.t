@@ -40,7 +40,15 @@ sub folder_testing {
       Password => $config->{password},
       auth => $auth,
     );
-    $user->create();
+    
+    # If testing fails half way through, the account that is expected to
+    # be cleaned up, may not be and fail.
+    eval { $user->create(); };
+
+    if ( $@ ) {
+      $user->delete();
+      $user->create();
+    }
 
     subtest 'Sharing' => sub {
 
@@ -50,7 +58,12 @@ sub folder_testing {
       my $index = firstidx { $_->{Username} eq $config->{username} if defined $_->{Username} } @users;
       is($users[$index]{User}{Username}, $config->{username}, "User shared successfully");
       is($users[$index]{Permission}, "CONTRIBUTE", "Permission 'CONTRIBUTE' assigned successfully");
-      
+
+      # Check 'shared_usersnames' returns correctly
+      my @usernames = $folder->shared_usernames;
+      $index = firstidx { $_ eq $config->{username} } @usernames;
+      is($usernames[$index], $config->{username}, "shared_usernames returns shared user successfully");
+
       # Update users permission
       $folder->user_share( users => $config->{username}, access => "VIEWER" );
       @users = $folder->shared_users;
@@ -63,10 +76,12 @@ sub folder_testing {
       ok(none { $_ eq $config->{username} } @users, "User removed from share");
 
       # As an array of users
-      $folder->user_share( users => [ $config->{username} ], access => "COOWNER" );
+      my @shares = $config->{username};
+      $folder->user_share( users => \@shares, access => "COOWNER" );
       @users = $folder->shared_users;
       $index = firstidx { $_->{Username} eq $config->{username} if defined $_->{Username} } @users;
       is($users[$index]{Permission}, "COOWNER", "Permission 'COOWNER' via array assigned successfully");
+      is($shares[0], $config->{username}, "Make sure we're not altering things unexpectedly");
 
       # Unshare a user as array
       $folder->user_unshare( users => [ $config->{username} ] );
