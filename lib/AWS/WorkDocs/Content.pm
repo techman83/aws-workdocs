@@ -184,14 +184,14 @@ method user_unshare(:$users) {
   my $result;
   if ( reftype( $users )->array ) {
     foreach my $user ( @{$users} ) {
-      $user = AWS::WorkDocs::User->new( EmailAddress => $user, auth => $self->auth);
-      $user->retrieve();
-      $self->auth->api_delete("/resource/".$self->Id."/permissions/".$user->Id);
+      my $user_object = AWS::WorkDocs::User->new( EmailAddress => $user, auth => $self->auth);
+      $user_object->retrieve();
+      $self->auth->api_delete("/resource/".$self->Id."/permissions/".$user_object->Id);
     }
   } else {
-    $users = AWS::WorkDocs::User->new( EmailAddress => $users, auth => $self->auth);
-    $users->retrieve();
-    $self->auth->api_delete("/resource/".$self->Id."/permissions/".$users->Id);
+    my $user_object = AWS::WorkDocs::User->new( EmailAddress => $users, auth => $self->auth);
+    $user_object->retrieve();
+    $self->auth->api_delete("/resource/".$self->Id."/permissions/".$user_object->Id);
   }
   $self->retrieve;
 }

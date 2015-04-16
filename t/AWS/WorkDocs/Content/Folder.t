@@ -84,9 +84,10 @@ sub folder_testing {
       is($shares[0], $config->{username}, "Make sure we're not altering things unexpectedly");
 
       # Unshare a user as array
-      $folder->user_unshare( users => [ $config->{username} ] );
+      $folder->user_unshare( users => \@shares );
       @users = $folder->shared_usernames;
       ok(none { $_ eq $config->{username} } @users, "User as array removed from share");
+      is($shares[0], $config->{username}, "Make sure we're not altering things unexpectedly");
     };
    
     subtest 'Warnings' => sub {
