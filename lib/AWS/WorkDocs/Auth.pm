@@ -13,7 +13,7 @@ use LWP::UserAgent;
 use Carp qw(croak);
 use Data::Dumper;
 
-our $DEBUG = $ENV{ZOCALO_DEBUG} || 0;
+our $DEBUG = $ENV{WORKDOCS_DEBUG} || 0;
 
 # ABSTRACT: AWS::WorkDocs Auth
 
