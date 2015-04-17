@@ -4,14 +4,16 @@ use v5.010;
 use strict;
 use warnings;
 use experimental 0.010 'say';
-use Moo;
 use Method::Signatures;
 use JSON qw(decode_json encode_json);
 use JSON::Parse 'valid_json';
 use HTTP::Request;
 use LWP::UserAgent;
 use Carp qw(croak);
+use Date::Parse;
 use Data::Dumper;
+use Moo;
+use namespace::clean;
 
 our $DEBUG = $ENV{WORKDOCS_DEBUG} || 0;
 
@@ -40,7 +42,8 @@ our $DEBUG = $ENV{WORKDOCS_DEBUG} || 0;
 has 'api_base'      => ( is => 'ro', default => sub { 'https://zocalo.{region}.amazonaws.com/gb/api/v1' });
 has 'region'        => ( is => 'ro', default => sub { 'us-west-1' });
 has 'api_uri'       => ( is => 'ro', lazy => 1, builder => 1 );
-has 'token'         => ( is => 'rw', lazy => 1, builder => 1 );
+has '_token'         => ( is => 'rw', lazy => 1, builder => 1 );
+has '_expiration'    => ( is => 'rw', default => sub { time } );
 has 'alias'         => ( is => 'ro', required => 1);
 has 'username'      => ( is => 'ro');
 has 'password'      => ( is => 'ro');
@@ -55,7 +58,7 @@ method _build_api_uri() {
 # but will need more work to handle tokin refresh. Looks similar to OAuth2,
 # will likely be moved to IAM + AWS Sig4, so this will do for now.
 
-method _build_token() {
+method _build__token() {
   # Request object
   my $request = HTTP::Request->new('POST' => $self->api_uri . "/authenticate");
   $request->header('Content-Type' => 'application/json');
@@ -87,7 +90,21 @@ method _build_token() {
   }
 
   my $content = decode_json($response->decoded_content);
+  $self->_expiration( str2time($content->{Expiration}) );
   return $content->{AuthenticationToken};
+}
+
+=method token
+
+ $auth->token();
+
+Returns a current authentication token, refreshing if
+necessary.
+
+=cut
+
+method token() {
+  return $self->_token;
 }
 
 =method api_get
