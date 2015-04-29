@@ -11,6 +11,7 @@ use HTTP::Request;
 use LWP::UserAgent;
 use Carp qw(croak);
 use Date::Parse;
+use Time::Local 'timegm';
 use Data::Dumper;
 use Moo;
 use namespace::clean;
@@ -42,8 +43,8 @@ our $DEBUG = $ENV{WORKDOCS_DEBUG} || 0;
 has 'api_base'      => ( is => 'ro', default => sub { 'https://zocalo.{region}.amazonaws.com/gb/api/v1' });
 has 'region'        => ( is => 'ro', default => sub { 'us-west-1' });
 has 'api_uri'       => ( is => 'ro', lazy => 1, builder => 1 );
-has '_token'         => ( is => 'rw', lazy => 1, builder => 1 );
-has '_expiration'    => ( is => 'rw', default => sub { time } );
+has '_token'         => ( is => 'rw', lazy => 1, builder => 1, clearer => 1 );
+has '_expiration'    => ( is => 'rw', default => sub { undef } );
 has 'alias'         => ( is => 'ro', required => 1);
 has 'username'      => ( is => 'ro');
 has 'password'      => ( is => 'ro');
@@ -94,6 +95,15 @@ method _build__token() {
   return $content->{AuthenticationToken};
 }
 
+method _should_refresh() {
+  my $time_gmt = timegm(gmtime(time + 1800));
+  if ( defined $self->_expiration && ( $self->_expiration < $time_gmt ) ) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
 =method token
 
  $auth->token();
@@ -104,6 +114,10 @@ necessary.
 =cut
 
 method token() {
+  if ( $self->_should_refresh ) {
+    $self->_clear_token;
+  }
+
   return $self->_token;
 }
 
