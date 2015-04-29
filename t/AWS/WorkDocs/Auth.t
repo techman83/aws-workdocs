@@ -5,7 +5,7 @@ use lib 't/lib/';
 use AWS::WorkDocs::Test;
 use Test::Most;
 use Test::Warnings;
-use Test::MockTime qw(set_relative_time);
+use Time::Local 'timegm';
 
 my $tester = AWS::WorkDocs::Test->new();
 
@@ -27,12 +27,16 @@ sub user_testing {
   subtest 'Token' => sub {
     isnt($auth->token, undef, "Token Request Successful");
     ok($auth->_expiration =~ /^\d+.?\d+$/ , "Expiration parsed");
-    TODO:{
-      local $TODO = "Refreshing of tokens not currently implemented\n";
-      use POSIX qw(strftime);
-      set_relative_time(86400);
-      ok(time < $auth->_expiration, "Token refreshed");
-    }
+    is($auth->_should_refresh, 0, "Token doesn't require refresh");
+    
+    # Set expiration in the past (our mucking about with gmtime
+    # seems to be incompatible with Test::MockTime)
+    $auth->_expiration(timegm(gmtime(time - 1800)));
+    my $expiration = $auth->{'_expiration'};
+    is($auth->_should_refresh, 1, "Token requires refresh");    
+    $auth->token();
+    ok($auth->_expiration =~ /^\d+.?\d+$/ , "Expiration parsed");
+    ok($expiration != $auth->_expiration, "Token refreshed");
   };
 }
 
