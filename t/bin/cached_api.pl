@@ -7,7 +7,7 @@ use AWS::WorkDocs::Test::Auth;
 use AWS::WorkDocs::Test::User;
 use AWS::WorkDocs::Test::Content;
 
-my $DEBUG = $ENV{ZOCALO_DEBUG} || 0;
+my $DEBUG = $ENV{WORKDOCS_DEBUG} || 0;
 
 # Debug/Dev
 if ($DEBUG) {
