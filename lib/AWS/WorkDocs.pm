@@ -35,7 +35,7 @@ has 'username'      => ( is => 'ro', required => 1);
 has 'password'      => ( is => 'ro', required => 1);
 
 has 'auth' => (
-  is => 'ro',
+  is => 'rw',
   isa => sub { "AWS::WorkDocs::Auth" },
   lazy => 1,
   builder => 1,
