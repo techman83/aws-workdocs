@@ -46,12 +46,14 @@ sub user_testing {
     dies_ok { $auth->api_get("blarg","blarg") } 'Get requires a single argument';
 
     # POST
-    dies_ok { $auth->api_post("invalid_url","blarg") } 'Post dies on invalid url';
+    dies_ok { $auth->api_post("invalid_url",{ blarg => "blarg"}) } 'Post dies on invalid url';
+    dies_ok { $auth->api_post() } 'Post requires an argument';
     dies_ok { $auth->api_post("invalid_url") } 'Post requires two arguments';
     dies_ok { $auth->api_post("invalid_url","blarg","blarg") } 'Post requires two arguments';
    
     # PUT 
-    dies_ok { $auth->api_put("invalid_url","blarg") } 'Put dies on invalid url';
+    dies_ok { $auth->api_put("invalid_url",{ blarg => "blarg" }) } 'Put dies on invalid url';
+    dies_ok { $auth->api_put() } 'Put requires an argument';
     dies_ok { $auth->api_put("invalid_url") } 'Put requires two arguments';
     dies_ok { $auth->api_put("invalid_url","blarg","blarg") } 'Put requires two arguments';
 
