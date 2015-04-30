@@ -6,6 +6,7 @@ use Dancer2;
 use AWS::WorkDocs::Test::Auth;
 use AWS::WorkDocs::Test::User;
 use AWS::WorkDocs::Test::Content;
+use AWS::WorkDocs::Test::Invite;
 
 my $DEBUG = $ENV{WORKDOCS_DEBUG} || 0;
 
