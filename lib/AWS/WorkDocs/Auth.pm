@@ -42,7 +42,7 @@ our $DEBUG = $ENV{WORKDOCS_DEBUG} || 0;
 
 has 'api_base'      => ( is => 'ro', default => sub { 'https://zocalo.{region}.amazonaws.com/gb/api/v1' });
 has 'region'        => ( is => 'ro', default => sub { 'us-west-1' });
-has 'api_uri'       => ( is => 'ro', lazy => 1, builder => 1 );
+has 'api_uri'       => ( is => 'rw', lazy => 1, builder => 1 );
 has '_token'         => ( is => 'rw', lazy => 1, builder => 1, clearer => 1 );
 has '_expiration'    => ( is => 'rw', default => sub { undef } );
 has 'alias'         => ( is => 'ro', required => 1);
@@ -73,6 +73,7 @@ method _build__token() {
   
   $request->content(encode_json($body));
 
+  # uncoverable branch true
   if ($DEBUG) {
     say "Get Request:";
     say Dumper($request);
@@ -85,6 +86,7 @@ method _build__token() {
     croak($response->as_string);
   }
 
+  # uncoverable branch true
   if ($DEBUG) {
     say "Get Response:";
     say Dumper($response->decoded_content);
@@ -134,6 +136,7 @@ method api_get($url) {
   my $request = HTTP::Request->new(GET => $self->api_uri . $url);
   $request->header(Authentication => "Bearer " . $self->token);
 
+  # uncoverable branch true
   if ($DEBUG) {
     say "Get Request:";
     say Dumper($request);
@@ -146,6 +149,7 @@ method api_get($url) {
     croak($response->as_string);
   }
 
+  # uncoverable branch true
   if ($DEBUG) {
     say "Get Response:";
     say Dumper($response->decoded_content);
@@ -170,9 +174,10 @@ method api_post($url,$body) {
   $request->header(Authentication => "Bearer " . $self->token);
   $request->content(encode_json($body));
 
+  # uncoverable branch true
   if ($DEBUG) {
     say "Post Request:";
-    say Dumper($request) if $DEBUG;
+    say Dumper($request);
   }
 
   my $user_agent = LWP::UserAgent->new;
@@ -182,6 +187,7 @@ method api_post($url,$body) {
     croak($response->as_string);
   }
 
+  # uncoverable branch true
   if ($DEBUG) {
     say "Post Response:";
     say Dumper($response->decoded_content);
@@ -206,9 +212,10 @@ method api_put($url,$body) {
   $request->header(Authentication => "Bearer " . $self->token);
   $request->content(encode_json($body));
 
+  # uncoverable branch true
   if ($DEBUG) {
     say "Put Request:";
-    say Dumper($request) if $DEBUG;
+    say Dumper($request);
   }
 
   my $user_agent = LWP::UserAgent->new;
@@ -218,6 +225,7 @@ method api_put($url,$body) {
     croak($response->as_string);
   }
 
+  # uncoverable branch true
   if ($DEBUG) {
     say "Put Response:";
     say Dumper($response->decoded_content);
@@ -239,9 +247,10 @@ method api_delete($url) {
   my $request = HTTP::Request->new(DELETE => $self->api_uri . $url);
   $request->header(Authentication => "Bearer " . $self->token);
 
+  # uncoverable branch true
   if ($DEBUG) {
     say "Delete Request:";
-    say Dumper($request) if $DEBUG;
+    say Dumper($request);
   }
 
   my $user_agent = LWP::UserAgent->new;
@@ -250,7 +259,8 @@ method api_delete($url) {
   if (!$response->is_success) {
     croak($response->as_string);
   }
-
+  
+  # uncoverable branch true
   if ($DEBUG) {
     say "Delete Response:";
     say Dumper($response->decoded_content);
