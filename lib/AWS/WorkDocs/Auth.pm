@@ -75,8 +75,8 @@ method _build__token() {
 
   # uncoverable branch true
   if ($DEBUG) {
-    say "Get Request:";
-    say Dumper($request);
+    say "Get Request:"; # uncoverable statement
+    say Dumper($request); # uncoverable statement
   }
 
   my $user_agent = LWP::UserAgent->new;
@@ -88,8 +88,8 @@ method _build__token() {
 
   # uncoverable branch true
   if ($DEBUG) {
-    say "Get Response:";
-    say Dumper($response->decoded_content);
+    say "Get Response:"; # uncoverable statement
+    say Dumper($response->decoded_content); # uncoverable statement
   }
 
   my $content = decode_json($response->decoded_content);
@@ -138,8 +138,8 @@ method api_get($url) {
 
   # uncoverable branch true
   if ($DEBUG) {
-    say "Get Request:";
-    say Dumper($request);
+    say "Get Request:"; # uncoverable statement
+    say Dumper($request); # uncoverable statement
   }
 
   my $user_agent = LWP::UserAgent->new;
@@ -151,8 +151,8 @@ method api_get($url) {
 
   # uncoverable branch true
   if ($DEBUG) {
-    say "Get Response:";
-    say Dumper($response->decoded_content);
+    say "Get Response:"; # uncoverable statement
+    say Dumper($response->decoded_content); # uncoverable statement
   }
 
   return decode_json($response->decoded_content);
@@ -176,8 +176,8 @@ method api_post($url,$body) {
 
   # uncoverable branch true
   if ($DEBUG) {
-    say "Post Request:";
-    say Dumper($request);
+    say "Post Request:"; # uncoverable statement
+    say Dumper($request); # uncoverable statement
   }
 
   my $user_agent = LWP::UserAgent->new;
@@ -189,8 +189,8 @@ method api_post($url,$body) {
 
   # uncoverable branch true
   if ($DEBUG) {
-    say "Post Response:";
-    say Dumper($response->decoded_content);
+    say "Post Response:"; # uncoverable statement
+    say Dumper($response->decoded_content); # uncoverable statement
   }
 
   return decode_json($response->decoded_content);
@@ -214,8 +214,8 @@ method api_put($url,$body) {
 
   # uncoverable branch true
   if ($DEBUG) {
-    say "Put Request:";
-    say Dumper($request);
+    say "Put Request:"; # uncoverable statement
+    say Dumper($request); # uncoverable statement
   }
 
   my $user_agent = LWP::UserAgent->new;
@@ -227,8 +227,8 @@ method api_put($url,$body) {
 
   # uncoverable branch true
   if ($DEBUG) {
-    say "Put Response:";
-    say Dumper($response->decoded_content);
+    say "Put Response:"; # uncoverable statement
+    say Dumper($response->decoded_content); # uncoverable statement
   }
 
   return decode_json($response->decoded_content);
@@ -249,8 +249,8 @@ method api_delete($url) {
 
   # uncoverable branch true
   if ($DEBUG) {
-    say "Delete Request:";
-    say Dumper($request);
+    say "Delete Request:"; # uncoverable statement
+    say Dumper($request); # uncoverable statement
   }
 
   my $user_agent = LWP::UserAgent->new;
@@ -262,8 +262,8 @@ method api_delete($url) {
   
   # uncoverable branch true
   if ($DEBUG) {
-    say "Delete Response:";
-    say Dumper($response->decoded_content);
+    say "Delete Response:"; # uncoverable statement
+    say Dumper($response->decoded_content); # uncoverable statement
   }
 
   return 1;
