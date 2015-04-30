@@ -9,8 +9,8 @@ use Time::Local 'timegm';
 
 my $tester = AWS::WorkDocs::Test->new();
 
-$tester->test_with_auth(\&user_testing, 4);
-$tester->test_with_dancer(\&user_testing, 4);
+$tester->test_with_auth(\&user_testing, 5);
+$tester->test_with_dancer(\&user_testing, 5);
 
 sub user_testing {
   my ($auth,$config,$message) = @_;
@@ -38,6 +38,36 @@ sub user_testing {
     ok($auth->_expiration =~ /^\d+.?\d+$/ , "Expiration parsed");
     ok($expiration != $auth->_expiration, "Token refreshed");
   };
+
+  subtest 'Failures' => sub {
+    # GET
+    dies_ok { $auth->api_get("invalid_url") } 'Get dies on invalid url';
+    dies_ok { $auth->api_get() } 'Get requires an argument';
+    dies_ok { $auth->api_get("blarg","blarg") } 'Get requires a single argument';
+
+    # POST
+    dies_ok { $auth->api_post("invalid_url","blarg") } 'Post dies on invalid url';
+    dies_ok { $auth->api_post("invalid_url") } 'Post requires two arguments';
+    dies_ok { $auth->api_post("invalid_url","blarg","blarg") } 'Post requires two arguments';
+   
+    # PUT 
+    dies_ok { $auth->api_put("invalid_url","blarg") } 'Put dies on invalid url';
+    dies_ok { $auth->api_put("invalid_url") } 'Put requires two arguments';
+    dies_ok { $auth->api_put("invalid_url","blarg","blarg") } 'Put requires two arguments';
+
+    # DELETE
+    dies_ok { $auth->api_delete("invalid_url") } 'Delete dies on invalid url';
+    dies_ok { $auth->api_delete() } 'Delete requires an argument';
+    dies_ok { $auth->api_delete("blarg","blarg") } 'Delete requires a single argument';
+    $auth->api_uri("invalid");
+    
+    # token
+    dies_ok { $auth->_build__token } 'Token dies correctly';
+    dies_ok { $auth->_build__token('argument') } "method '_build__token' doesn't accept arguments";
+    dies_ok { $auth->_should_refresh('argument') } "method '_should_refresh' doesn't accept arguments";
+    dies_ok { $auth->token('argument') } "method 'token' doesn't accept arguments";
+    dies_ok { $auth->_build_api_uri('argument') } "method '_build_api_uri' doesn't accept arguments";
+  }
 }
 
 done_testing();
