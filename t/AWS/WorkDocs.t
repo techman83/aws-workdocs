@@ -45,7 +45,14 @@ sub user_testing {
   );
   
   subtest 'User' => sub {
-    $user->create();
+    # If testing fails half way through, the account that is expected to
+    # be cleaned up, may not be and fail.
+    eval { $user->create(); };
+
+    if ( $@ ) {
+      $user->delete();
+      $user->create();
+    }
     $user->retrieve();
     
     isnt($user->{Id}, ''||undef, "Id: $user->{Id}");
