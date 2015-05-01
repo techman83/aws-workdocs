@@ -58,6 +58,7 @@ method test_with_dancer($test, $number_tests) {
       givenname => 'WorkDocs',
       surname => 'Test',
       folder => '12345678',
+      document => '12345678',
     };
 
     my $auth = AWS::WorkDocs::Auth->new(
