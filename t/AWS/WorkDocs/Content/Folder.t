@@ -3,14 +3,15 @@
 use lib 't/lib/';
 
 use AWS::WorkDocs::Test;
+use AWS::WorkDocs::Test::InvalidContent;
 use Test::Most;
 use List::MoreUtils qw( firstidx none );
 use Test::Warnings;
 
 my $tester = AWS::WorkDocs::Test->new();
 
-$tester->test_with_auth(\&folder_testing, 4);
-$tester->test_with_dancer(\&folder_testing, 4);
+$tester->test_with_auth(\&folder_testing, 6);
+$tester->test_with_dancer(\&folder_testing, 6);
 
 sub folder_testing {
   my ($auth,$config,$message) = @_;
@@ -29,7 +30,7 @@ sub folder_testing {
     subtest 'Instantiation' => sub {
       isa_ok($folder, "AWS::WorkDocs::Content::Folder");
       
-      can_ok($folder, qw(retrieve org_share org_unshare user_share
+      can_ok($folder, qw(retrieve user_share
         user_unshare shared_users shared_usernames));
     };
 
@@ -64,12 +65,29 @@ sub folder_testing {
       $index = firstidx { $_ eq $config->{username} } @usernames;
       is($usernames[$index], $config->{username}, "shared_usernames returns shared user successfully");
 
-      # Update users permission
-      $folder->user_share( users => $config->{username}, access => "VIEWER" );
+      # Update users permission to default, including a message
+      $folder->user_share( users => $config->{username}, message => "I'm letting you view" );
       @users = $folder->shared_users;
       $index = firstidx { $_->{Username} eq $config->{username} if defined $_->{Username} } @users;
       is($users[$index]{Permission}, "VIEW", "Permission 'VIEW' assigned successfully");
       
+      # Too many/invalid arguments
+      dies_ok { $folder->user_share( 
+        users => $config->{username}, 
+        message => "I'm letting you view",
+        access => "VIEWER",
+        "blarg" => "blarg",
+        )
+      } "user_share dies correctly with invalid arguments";
+
+      dies_ok { $folder->user_share( 
+        users => $config->{username}, 
+        message => "I'm letting you view",
+        access => "VIEWER",
+        users => $config->{username}, 
+        )
+      } "user_share dies correctly with too many arguments";
+
       # Unshare a user
       $folder->user_unshare( users => $config->{username} );
       @users = $folder->shared_usernames;
@@ -88,6 +106,10 @@ sub folder_testing {
       @users = $folder->shared_usernames;
       ok(none { $_ eq $config->{username} } @users, "User as array removed from share");
       is($shares[0], $config->{username}, "Make sure we're not altering things unexpectedly");
+      
+      # Too many/Invalid arguments
+      dies_ok { $folder->user_unshare( users => \@shares, users => \@shares ) } "user_unshare dies correctly with too many arguments";
+      dies_ok { $folder->user_unshare( blarg => \@shares ) } "user_unshare dies correctly with invalid arguments";
     };
    
     subtest 'Warnings' => sub {
@@ -97,9 +119,25 @@ sub folder_testing {
       throws_ok { $folder->user_share( users => $config->{username}, access => "CONTRIBUTE" ) }
         qr/CONTRIBUTE not valid, only \[COOWNER, VIEWER, OWNER, CONTRIBUTOR\] are valid types/,
         "Invalid permission type 'CONTRIBUTE' correctly croaks";
+
+      throws_ok { my $content = AWS::WorkDocs::Test::InvalidContent->new( Id => '12345678', auth => $auth ) }
+        qr/Extending class neither document or folder at/,
+        "Invalid Content Type correctly croaks";
+
     };
     
     $user->delete();
+  
+    subtest 'Failures' => sub {
+      dies_ok { $folder->_build_content('argument') } "method '_build_content' doesn't accept arguments";
+      dies_ok { $folder->_map_keys() } "'_map_keys' requires an argument";
+      dies_ok { $folder->_map_keys("blarg","blarg") } "'_map_keys' requires a single argument";
+      dies_ok { $folder->retrieve('argument') } "method 'retrieve' doesn't accept arguments";
+      dies_ok { $folder->_build_Type('argument') } "method '_build_Type' doesn't accept arguments";
+      dies_ok { $folder->shared_usernames('argument') } "method 'shared_usernames' doesn't accept arguments";
+      dies_ok { $folder->shared_users('argument') } "method 'shared_users' doesn't accept arguments";
+      dies_ok { $folder->user_unshare() } "'user_unshare' requires a named argument";
+    }
   }
 }
 
