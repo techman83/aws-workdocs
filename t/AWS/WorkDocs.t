@@ -8,8 +8,8 @@ use Test::Warnings;
 
 my $tester = AWS::WorkDocs::Test->new();
 
-$tester->test_with_auth(\&user_testing, 7);
-$tester->test_with_dancer(\&user_testing, 7);
+$tester->test_with_auth(\&user_testing, 8);
+$tester->test_with_dancer(\&user_testing, 8);
 
 sub user_testing {
   my ($auth,$config,$message) = @_;
@@ -33,6 +33,9 @@ sub user_testing {
     is($workdocs->alias, $auth->{alias}, "Alias OK");
     is($workdocs->username, $auth->{username}, "Username OK");
     is($workdocs->password, $auth->{password}, "Password OK");
+    dies_ok { $workdocs->_build_auth('argument') } "method '_build_auth' doesn't accept arguments";
+    my $auth_test = $workdocs->_build_auth;
+    isa_ok($workdocs, "AWS::WorkDocs");
   };
  
   $workdocs->auth($auth);
@@ -123,8 +126,46 @@ sub user_testing {
     $invite->retrieve();
     my $delete = $invite->delete();
     is($delete, 1, "User Deleted");
-  }
+  };
 
+  subtest 'Failures' => sub {
+    dies_ok { $workdocs->folder(Cows => 1) } "method 'folder' requires a named argument of 'Id'";
+    dies_ok { $workdocs->folder(Id => 1, Id => 2) } "method 'folder' requires a single named argument";
+    dies_ok { $workdocs->document(Cows => 1) } "method 'document' requires a named argument of 'Id'";
+    dies_ok { $workdocs->document(Id => 1, Id => 2) } "method 'document' requires a single named argument";
+  
+    dies_ok { $workdocs->user(
+      Id => '12345678',
+      EmailAddress => $config->{username},
+      GivenName => $config->{givenname},
+      Surname => $config->{surname},
+      Password => $config->{password},
+      EmailAddress => $config->{username},
+    ) } "user dies correctly with too many arguments";
+
+    dies_ok { $workdocs->user(
+      EmailAddress => $config->{username},
+      GivenName => $config->{givenname},
+      Surname => $config->{surname},
+      Password => $config->{password},
+      Cats => $config->{password},
+    ) } "user dies correctly with invalid arguments";
+
+    dies_ok { $workdocs->invite( 
+      users => [ $config->{username} ], 
+      resend => 1,  
+      subject => "test invite",
+      Cows => "test message",
+    ) } "invite dies correctly with invalid arguments";
+    
+    dies_ok { $workdocs->invite( 
+      users => [ $config->{username} ], 
+      resend => 1,  
+      subject => "test invite",
+      message => "test message",
+      resend => 1,  
+    ) } "invite dies correctly with too many arguments";
+  };
 }
 
 done_testing();
