@@ -4,14 +4,20 @@ use Dancer2;
 
 our $temp;
 
-#post '/user' => sub {
-#  my $user->{User} = config->{testdata}{User};
-#  return $user;
-#};
-#
 get '/folder/:Id' => sub {
   {
     Folder => {
+      Metadata => {
+        Id => param('Id'),
+        PermissionsGranted => $temp->{permissions},
+      },
+    },
+  }
+};
+
+get '/document/:Id' => sub {
+  {
+    Document => {
       Metadata => {
         Id => param('Id'),
         PermissionsGranted => $temp->{permissions},
