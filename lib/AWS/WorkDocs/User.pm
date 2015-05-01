@@ -93,10 +93,10 @@ attributes are set: EmailAddress, Password, GivenName, Surname
 =cut
 
 method create() {
-  if (! $self->{EmailAddress} || ! $self->{Password} || 
-      ! $self->{GivenName} || ! $self->{Surname}) {
-    croak("EmailAddress, GivenName, Surname + Password are required for User creation");
-  }
+  croak("EmailAddress is required for User creation") unless $self->{EmailAddress};
+  croak("Password is required for User creation") unless $self->{Password};
+  croak("GivenName is required for User creation") unless $self->{GivenName};
+  croak("Surname is required for User creation") unless $self->{Surname};
 
   my $body = {
     Username => $self->EmailAddress,
@@ -118,7 +118,7 @@ Will update a user based on the current objects attributes.
 =cut
 
 method update() {
-  $self->retrieve unless $self->{Id};
+  croak("Id required for update, call retrieve method first") unless $self->{Id};
   my $body = {
     EmailAddress => $self->EmailAddress,
     GivenName => $self->GivenName,
