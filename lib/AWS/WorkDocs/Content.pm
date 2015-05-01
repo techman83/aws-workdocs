@@ -75,45 +75,42 @@ method retrieve() {
   return;
 }
 
-=method org_share
-
-  $content->org_share();
-
-This will share the content with the entire organisation.
-
-=cut
-
-method org_share() {
-  $self->_org_share(1);
-}
-
-=method org_unshare
-
-  $content->org_unshare();
-
-This will deactivate an org wide share.
-
-=cut
-
-method org_unshare() {
-  $self->_org_share(0);
-}
-
-method _org_share($state = 0) {
-  my $result;
-  my $body;
-  if ($state) {
-    $body->{ShareWithOrganization} = "true";
-    $result = $self->auth->api_post("/$self->{_type}/$self->{Id}/share", $body);
-  } else {
-    $body->{ShareWithOrganization} = "false";
-    $result = $self->auth->api_post("/$self->{_type}/$self->{Id}/share", $body);
-  }
-}
-
-# The following method differs code wise, but the exposed method is 
-# the same between both Document/Folder. See the relevant packages
-# for the code.
+# TODO: Find out new method for org wide sharing
+#=method org_share
+#
+#  $content->org_share();
+#
+#This will share the content with the entire organisation.
+#
+#=cut
+#
+#method org_share() {
+#  $self->_org_share(1);
+#}
+#
+#=method org_unshare
+#
+#  $content->org_unshare();
+#
+#This will deactivate an org wide share.
+#
+#=cut
+#
+#method org_unshare() {
+#  $self->_org_share(0);
+#}
+#
+#method _org_share($state = 0) {
+#  my $result;
+#  my $body;
+#  if ($state) {
+#    $body->{ShareWithOrganization} = "true";
+#    $result = $self->auth->api_post("/$self->{_type}/$self->{Id}/share", $body);
+#  } else {
+#    $body->{ShareWithOrganization} = "false";
+#    $result = $self->auth->api_post("/$self->{_type}/$self->{Id}/share", $body);
+#  }
+#}
 
 =method user_share
 
