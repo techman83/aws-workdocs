@@ -45,6 +45,18 @@ has 'Status'                  => ( is => 'rw' );
 has 'Administrator'           => ( is => 'rw' );
 has 'OwnershipTransferInfo'   => ( is => 'rw' );
 has 'Password'                => ( is => 'rw', isa => $Pwd);
+has '_raw'                    => ( is => 'ro' );
+
+sub BUILD {
+  my $self = shift;
+
+  if ($self->{_raw}) {
+    my $user->{User} = $self->_raw;
+    $self->_map_keys($user);
+  }
+  return;
+}
+
 
 method _build_user() {
   my $user;
