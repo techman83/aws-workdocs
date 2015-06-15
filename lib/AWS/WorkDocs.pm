@@ -112,6 +112,55 @@ method user(
     );
 }
 
+=method search_user
+  $workdocs->search_user(%parms);
+
+This will return an array of L<AWS::WorkDocs::User> objects.
+
+=over
+
+=item query
+
+Query string. Optional, leave empty to return all available 
+users. Can be Email address/Given/Surname/Full Name etc.
+
+=item page
+
+Return results on page x. Defaults to page 0.
+
+=item page_size
+
+Results per page. Defaults to 50.
+
+=back
+
+=cut
+
+method search_users (
+  :$query = undef, 
+  :$page = 0,
+  :$page_size = 50, ) {
+  
+  my $users;
+  if ($query) {
+    # API search is separated by + signs.
+    $query =~ s/\s/+/g;
+
+    $users = $self->auth->api_get("/organization/user?order=DESCENDING&pageNumber=$page&pageSize=$page_size&sortBy=FULL_NAME&query=$query");
+  } else {
+    $users = $self->auth->api_get("/organization/user?order=DESCENDING&pageNumber=$page&pageSize=$page_size&sortBy=FULL_NAME");
+  }
+  
+  my @results; 
+  foreach my $user (@{$users->{Users}}) {
+    push(@results, AWS::WorkDocs::User->new( 
+      _raw => $user, 
+      auth => $self->auth ),
+    );
+  }
+  return @results;
+}
+
 =method folder
 
   my $folder = $workdocs->folder(Id => 'folder_id');

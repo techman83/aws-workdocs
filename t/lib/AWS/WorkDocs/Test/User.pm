@@ -38,4 +38,9 @@ get '/organization/user/search' => sub {
   return $user;
 };
 
+get '/organization/user' => sub {
+  my $user->{Users} = [ config->{testdata}{User} ];
+  return $user;
+};
+
 1;

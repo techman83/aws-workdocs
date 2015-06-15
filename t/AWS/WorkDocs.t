@@ -77,6 +77,17 @@ sub user_testing {
     $via_id->retrieve();
     is($via_id->{EmailAddress}, $user->{EmailAddress}, "User retrieved via Id");
     
+    subtest 'search_users' => sub {
+      my @users = $workdocs->search_users;
+      isnt($users[0]->Id, undef, "A user was found");
+      @users = $workdocs->search_users( page_size => 1 );
+      is($users[1], undef, "Page size not bigger than 1");
+      @users = $workdocs->search_users( page_size => 1, page => 1 );
+      isnt($users[0]->Id, undef, "A user was found on the second page");
+      @users = $workdocs->search_users( query => "$config->{givenname} $config->{surname}" );
+      is($users[0]->GivenName, $config->{givenname}, "User found via search query");
+    };
+
     my $delete = $user->delete();
     is($delete, 1, "User Deleted");
   };
@@ -165,6 +176,19 @@ sub user_testing {
       message => "test message",
       resend => 1,  
     ) } "invite dies correctly with too many arguments";
+
+    dies_ok { $workdocs->search_users( 
+      query => "users",
+      page => "0",
+      page_size => "50",
+      page_size => "5",
+    ) } "search_users dies correctly with too many arguments";
+
+    dies_ok { $workdocs->search_users( 
+      query => "users",
+      page => "0",
+      nyan => "50",
+    ) } "search_users dies correctly with invalid arguments";
   };
 }
 
