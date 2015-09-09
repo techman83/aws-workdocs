@@ -4,11 +4,9 @@ use v5.010;
 use strict;
 use warnings;
 use Method::Signatures;
-use Scalar::Util::Reftype;
-use Carp 'croak';
-use AWS::WorkDocs::User;
 use Moo;
-use namespace::clean
+use MooX::HandlesVia;
+use namespace::clean;
 
 extends 'AWS::WorkDocs::Content';
 
@@ -27,5 +25,78 @@ extends 'AWS::WorkDocs::Content';
 Extends L<AWS::WorkDocs::Content>, see that for all documentation.
 
 =cut
+
+has 'Folders' => (
+  is            => 'rw',
+  handles_via   => 'Array',
+  handles       => {
+    push_folder   => 'push',
+    clear_folders => 'clear',
+    first_folder  => 'first_index'
+  },
+  default       => sub { [ ] },
+);
+
+before '_map_keys' => sub {
+  my $self = shift;
+  $self->clear_folders; 
+};
+
+method _push_folders($folders) {
+  foreach my $folder (@{$folders}) {
+    $self->_push_folder($folder->{Id});
+  }
+  return;
+}
+
+method _push_folder($Id) {
+  use AWS::WorkDocs::Content::Folder;
+  $self->push_folder(AWS::WorkDocs::Content::Folder->new( Id => $Id, auth => $self->auth ));
+}
+
+=method create_folder
+
+  $folder->create($name)
+
+Will create a child folder underneath this folder.
+
+=cut
+
+method create_folder($name) {
+  my $body = {
+    FolderName      => $name,
+    ParentFolderId  => $self->Id,
+  };
+
+  my $result = $self->auth->api_post("/".$self->_type, $body);
+  $self->_push_folder($result->{Folder}{Metadata}{Id});
+  return $result->{Folder}{Metadata}{Id};
+}
+
+=method child_folder
+
+  $folder->child_folder(Id => $id)
+
+Will return a folder object for the given $id or '0' if it doesn't 
+exist in '$folder->Folders'.
+
+=cut
+
+method child_folder(:$Id) {
+  my $index = $self->first_folder( sub { $_->Id eq $Id } );
+  return $index == '-1' ? 0 : @{$self->Folders}[$index];
+}
+
+=method remove
+  $folder->remove;
+
+*HERE BE DRAGONS* - this will literally remove the folder of
+the instantiated object.
+
+=cut
+
+method remove {
+ $self->auth->api_delete("/".$self->{_type}."/".$self->Id);
+}
 
 1;

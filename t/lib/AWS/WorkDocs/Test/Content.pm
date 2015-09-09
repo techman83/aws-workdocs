@@ -11,6 +11,11 @@ get '/folder/:Id' => sub {
         Id => param('Id'),
         PermissionsGranted => $temp->{permissions},
       },
+      Folders => [
+        {
+          Id => '987654321',
+        },
+      ]
     },
   }
 };
@@ -21,6 +26,16 @@ get '/document/:Id' => sub {
       Metadata => {
         Id => param('Id'),
         PermissionsGranted => $temp->{permissions},
+      },
+    },
+  }
+};
+
+post '/folder' => sub {
+  {
+    Folder => {
+      Metadata => {
+        Id => 1234,
       },
     },
   }
@@ -55,6 +70,11 @@ put '/resource/:Id/permissions' => sub {
   @{$content->{ShareResults}} = @results;
 
   return $content;
+};
+
+
+del '/folder/:Id' => sub {
+  return;
 };
 
 del '/resource/:Id/permissions/:SId' => sub {

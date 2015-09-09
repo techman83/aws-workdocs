@@ -3,13 +3,13 @@ package AWS::WorkDocs::Content;
 use v5.010;
 use strict;
 use warnings;
-use Moo;
-use Method::Signatures;
 use Scalar::Util::Reftype;
-use experimental 'switch';
 use Data::Dumper;
 use Carp qw(croak);
-use AWS::WorkDocs::User;
+use Method::Signatures;
+use Moo;
+use experimental 'switch';
+use namespace::clean;
 
 # ABSTRACT: A WorkDocs Content Object 
 
@@ -30,7 +30,7 @@ shared/unshared through similar API methods. API wise Folders
 =cut
 
 my $Ref = sub {
-  croak "auth isn't a 'AWS::WorkDocs::Auth' object!" unless reftype( $_[0] )->class eq "AWS::WorkDocs::Auth";
+  croak "auth isn't a 'AWS::WorkDocs::Auth' object!" unless $_[0]->DOES("AWS::WorkDocs::Auth");
 };
 
 # Authentication Object
@@ -43,13 +43,17 @@ has '_Type'       => ( is => 'ro', builder => "_build_Type" );
 
 method _build_content() {
   my $content;
-  $content = $self->auth->api_get("/$self->{_type}/$self->{Id}");
+  $content = $self->auth->api_get("/".$self->_type."/".$self->Id);
   $self->_map_keys($content);  
 }
 
 method _map_keys($data) {
-  foreach my $key (keys %{ $data->{$self->{_Type}} }) {
-    $self->{$key} = $data->{$self->{_Type}}{$key}; 
+  foreach my $key (keys %{ $data->{$self->_Type} }) {
+    if ( $key eq 'Folders' && @{$data->{$self->_Type}{$key}}[0]) {
+      $self->_push_folders($data->{$self->_Type}{$key});
+    } else {
+      $self->{$key} = $data->{$self->_Type}{$key}; 
+    }
   }
 }
 
@@ -135,6 +139,7 @@ other acceptable values are 'CONTRIBUTOR', 'COOWNER' or 'OWNER'.
 =cut
 
 method user_share(:$users,:$access = "VIEWER", :$message = "") {
+  use AWS::WorkDocs::User;
   $access = uc($access);
   if ($access !~ /COOWNER|VIEWER|OWNER|CONTRIBUTOR/) {
     croak("$access not valid, only [COOWNER, VIEWER, OWNER, CONTRIBUTOR] are valid types");
@@ -178,6 +183,7 @@ usernames.
 =cut
 
 method user_unshare(:$users) {
+  use AWS::WorkDocs::User;
   my $result;
   if ( reftype( $users )->array ) {
     foreach my $user ( @{$users} ) {
@@ -202,6 +208,7 @@ Will return an array of L<AWS::WorkDocs::User> objects.
 =cut
 
 method shared_users() {
+  use AWS::WorkDocs::User;
   $self->retrieve;
   
   my @users;
