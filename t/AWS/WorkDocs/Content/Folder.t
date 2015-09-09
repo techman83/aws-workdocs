@@ -31,7 +31,8 @@ sub folder_testing {
       isa_ok($folder, "AWS::WorkDocs::Content::Folder");
       
       can_ok($folder, qw(retrieve user_share
-        user_unshare shared_users shared_usernames));
+        user_unshare shared_users shared_usernames
+        create_folder));
     };
 
     my $user = AWS::WorkDocs::User->new(
@@ -50,6 +51,20 @@ sub folder_testing {
       $user->delete();
       $user->create();
     }
+
+    subtest 'Folder Create/Delete/Find' => sub {
+      my $id = $folder->create_folder("TestFolder1");
+      my $created = AWS::WorkDocs::Content::Folder->new(
+        Id => $id,
+        auth => $auth,
+      );
+      print $id."\n";
+      is($folder->child_folder(Id => $id)->Id, $id, "Find folder in Array of Folders by Id");
+      is($folder->child_folder(Id => "notafolder"), 0, "Return 0 when folder not found");
+      $created->remove;
+      $folder->retrieve;
+      is($folder->child_folder(Id => $id), 0, "Folder is not present after removal");
+    };
 
     subtest 'Sharing' => sub {
 
@@ -87,6 +102,12 @@ sub folder_testing {
         users => $config->{username}, 
         )
       } "user_share dies correctly with too many arguments";
+
+      dies_ok { $folder->child_folder( 
+        Id => "1234", 
+        "blarg" => "blarg",
+        )
+      } "child_folder dies correctly with invalid arguments";
 
       # Unshare a user
       $folder->user_unshare( users => $config->{username} );
@@ -137,6 +158,13 @@ sub folder_testing {
       dies_ok { $folder->shared_usernames('argument') } "method 'shared_usernames' doesn't accept arguments";
       dies_ok { $folder->shared_users('argument') } "method 'shared_users' doesn't accept arguments";
       dies_ok { $folder->user_unshare() } "'user_unshare' requires a named argument";
+      dies_ok { $folder->_push_folders() } "'_push_folders' requires an argument";
+      dies_ok { $folder->_push_folders("arg","arg") } "'_push_folders' only takes one argument";
+      dies_ok { $folder->_push_folder() } "'_push_folder' requires an argument";
+      dies_ok { $folder->_push_folder("arg","arg") } "'_push_folder' only takes one argument";
+      dies_ok { $folder->create_folder() } "'create_folder' requires an argument";
+      dies_ok { $folder->create_folder("arg","arg") } "'create_folder' only takes one argument";
+      dies_ok { $folder->remove("arg") } "'remove' takes no arguments";
     }
   }
 }
